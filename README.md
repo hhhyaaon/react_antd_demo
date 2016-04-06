@@ -1,2 +1,20 @@
 # React_Antd_Demo
 React Ant_Design SPA Gulp
+
+##技术栈
+- React
+- Ant_Design
+- Gulp
+- Nodejs
+
+###介绍
+History实现基于React的SPA，使用Nodejs安装插件，Gulp负责打包合并资源文件
+
+##安装
+```
+npm install
+```
+##本地发布localhost:5000
+```
+gulp server
+```
