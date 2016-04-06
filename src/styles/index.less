@@ -4,13 +4,15 @@
 	position: relative;
 	border-top:3px solid @theme_dark_green;
 	width: 100%;
-	height: 100%;
+	min-height: 100%;
 }
 
 #sy-menuwrap{
 	position: absolute;
 	width: 230px;
+	min-height: 100%;
 	background-color: white;
+	z-index:1;
 
 	.sy-logo{
 		background-color: @shadow_gray;
@@ -25,20 +27,28 @@
 	}
 	.sy-logo h2:after{
 		content: "Beta";
-    	background-color: #cccccc;
+    	background-color: @font_gray;
     	color: white;
     	margin-left: 10px;
     	font-size: xx-small;
     	padding: 2px;
 	}
 	
-	& #menu{
-
+	.ant-menu-inline{
+		border-right:none;
 	}
 }
 
 
 #sy-ctnwrap{
+	position: absolute;
 	border-left: 231px solid @border_gray;
 	min-height: 100%;
+	width:100%;
+
+	#sy-header{
+		height: 60px;
+		line-height: 60px;
+		border-bottom: 1px solid @border_gray;
+	}
 }

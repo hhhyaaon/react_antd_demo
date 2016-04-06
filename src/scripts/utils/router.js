@@ -20,13 +20,13 @@ var router = (function(){
 
 		//注册跳转前执行事件
 		History.listenBefore(function(transition){
-			console.log("listenBefore");
+			console.log("listenBefore",transition);
 			_unloadPage(transition.pathname);
 		});
 
 		//注册跳转后执行事件
 		History.listen(function(transition){
-			console.log("listen");
+			console.log("listen",transition);
 			if(!transition.pathname||$.trim(transition.pathname)==="/"){
 				gotoUrl(homePath);	
 			}else{
@@ -74,7 +74,7 @@ var router = (function(){
 			url:Path.join(ViewPath,url)+".html",
 			dateType:"html",
 			success:function(html){
-				$("#app").html(html);
+				$("#sy-ctn").html(html);
 			},
 			error:function(){
 				console.error("获取页面失败");

@@ -1,62 +1,173 @@
+console.log("load index");
+
 $ = require("jquery");
 var React = require("react");
 var ReactDOM = require("react-dom");
 
 var Router = require("../utils/router.js");
+Util = require("../utils/tool.js");
 
 var Antd = require("antd");
-var Row = Antd.Row;
-var Col = Antd.Col;
+var Menu = Antd.Menu;
+var Icon = Antd.Icon;
 
 console.log("Antd",Antd);
 
 //import "antd/lib/index.css";
 
 $(function(){
+	var menuItemUrl = {
+		"2-1":"/user/list",
+		"2-2":"/user/detail"
+	}
 	init();
 
 	function init(){
 		Router.initHistory();
-		renderLayout();
+		initMenu();
 		getMenu();
 	}	
 
-	/**
-	 * 渲染页面
-	 * @return {[type]}
-	 */
-	function renderLayout(){
-		// ReactDOM.render(
-		// 	<div className="">
-		// 		<Row>
-		// 			<Col span="12">.col-12</Col>
-		// 			<Col span="12">.col-12</Col>
-		// 		</Row>
-		// 	</div>,
-		// 	document.getElementById("container")
-		// )
+
+	function initMenu(){
+
 	}
 
 	function getMenu(){
 		// todo ajax
-		var menus = [
+		var menuArr = [
 			{
 				id:"1",
-				name:"用户管理",
+				name:"概况",
+				sub:[]
+			},
+			{
+				id:"2",
+				name:"管理",
 				sub:[
 					{
-						id:"1-1",
-						name:"用户子级",
+						id:"2-1",
+						name:"产品管理",
+						url:"/user/list",
+						sub:[]
+					},{
+						id:"2-2",
+						name:"信息点管理",
+						sub:[]
+					},{
+						id:"2-3",
+						name:"内容管理",
 						sub:[]
 					}
 				]
 			},
 			{
-				id:"2",
-				name:"产品管理",
-				sub:[]
+				id:"3",
+				name:"精准化营销",
+				sub:[
+					{
+						id:"3-1",
+						name:"营销管理",
+						sub:[]
+					},{
+						id:"3-2",
+						name:"统计分析",
+						sub:[]
+					}
+				]
+			},
+			{
+				id:"4",
+				name:"高效推广",
+				sub:[
+					{
+						id:"4-1",
+						name:"推广管理",
+						sub:[]
+					},{
+						id:"4-2",
+						name:"统计分析",
+						sub:[]
+					}
+				]
+			},
+			{
+				id:"5",
+				name:"设置",
+				sub:[
+					{
+						id:"5-1",
+						name:"权限设置",
+						sub:[]
+					},{
+						id:"5-2",
+						name:"账户充值",
+						sub:[]
+					}
+				]
 			}
 		];
+
+		renderMenu(menuArr);
+	}
+
+
+	function renderMenu(menuArr){
+		
+		var Slider = React.createClass({
+			getInitialState:function(){
+				return {
+					currentItem:"",
+					openItems:[]
+				}
+			},
+			render:function(){
+				var subMenus = $.map(menuArr,function(menu){
+					//是否含有子项
+					if(menu.sub instanceof Array===true && menu.sub.length>0){
+						var items = $.map(menu.sub,function(item){
+							return (
+								<Menu.Item key={item.id}>{item.name}</Menu.Item>
+							);
+						});
+						return (
+							<Menu.SubMenu key={menu.id} title={<span><Icon type="mail"/> <span>{menu.name}</span></span>} children={items}>
+							</Menu.SubMenu>
+						)
+					}else{
+						return (
+							<Menu.Item key={menu.id} >
+								<Icon type="mail"/> 
+								<span>{menu.name}
+								</span>
+							</Menu.Item>
+						)
+					}
+				});
+				return (
+					<Menu 
+					mode="inline"
+					openKeys={this.state.openItems}
+					onOpen={this.onChangeOpen}
+					onClose={this.onChangeOpen}
+					onSelect={this.onSelect}
+					onClick={this.onClick}
+					>{subMenus}</Menu>
+				)
+			},
+			onChangeOpen:function(sub){
+				//仅展开当前选中目录
+				this.setState({
+					openItems:(sub.open?[sub.key]:[])
+				});
+			},
+			onSelect:function(item){
+				Router.gotoUrl(menuItemUrl[item.key]);
+			}
+		});
+
+
+		ReactDOM.render(<Slider/>,document.getElementById("sy-menu"));
 	}
 })
 
