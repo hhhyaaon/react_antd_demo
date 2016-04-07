@@ -7,8 +7,8 @@ React Ant_Design SPA Gulp
 - Gulp
 - Nodejs
 
-###介绍
-History实现基于React的SPA，使用Nodejs安装插件，Gulp负责打包合并资源文件
+##介绍
+使用基于React的组件库Ant_Design构建页面，History实现SPA，使用Nodejs安装插件，Gulp负责打包合并资源文件
 
 ##安装
 ```
