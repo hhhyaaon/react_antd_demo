@@ -3,12 +3,12 @@ var router = (function(){
 
 	var Path = require("path");
 	var ReactDOM = require("react-dom");
+	var _initHistory = require("history/lib/createBrowserHistory");//注册H5 History
+	var Util = require("./tool.js");
+
 	var ViewPath = Path.join("/","./views");
 
-
-	var _initHistory = require("history/lib/createBrowserHistory");//注册H5 History
 	var History = null;
-
 	//-------------
 	var homePath = "/common/home";
 	var curPath = "";
@@ -73,7 +73,11 @@ var router = (function(){
 			type:"get",
 			url:Path.join(ViewPath,url)+".html",
 			dateType:"html",
+			beforeSend:function(){
+				Util.showLoading();
+			},
 			success:function(html){
+				Util.hideLoading();
 				$("#sy-ctn").html(html);
 			},
 			error:function(){

@@ -1,38 +1,38 @@
-console.log("load index");
 
 $ = require("jquery");
 var React = require("react");
 var ReactDOM = require("react-dom");
 
+var Util = require("../utils/tool.js");
 var Router = require("../utils/router.js");
-Util = require("../utils/tool.js");
 
 var Antd = require("antd");
 var Menu = Antd.Menu;
 var Icon = Antd.Icon;
 
-console.log("Antd",Antd);
 
-//import "antd/lib/index.css";
+//全局导出
+window.Syp = {
+	Util:Util,
+	Router:Router
+}
 
 $(function(){
 	var menuItemUrl = {
-		"2-1":"/user/list",
-		"2-2":"/user/detail"
+		"2-1":"/product/list",
+		"2-2":"/product/detail"
 	}
 	init();
 
 	function init(){
 		Router.initHistory();
-		initMenu();
 		getMenu();
 	}	
 
-
-	function initMenu(){
-
-	}
-
+	/**
+	 * 获取菜单
+	 * @return {[type]} [description]
+	 */
 	function getMenu(){
 		// todo ajax
 		var menuArr = [
@@ -111,7 +111,11 @@ $(function(){
 		renderMenu(menuArr);
 	}
 
-
+	/**
+	 * 渲染菜单
+	 * @param  {Array} menuArr 菜单项集合
+	 * @return {[type]}         [description]
+	 */
 	function renderMenu(menuArr){
 		
 		var Slider = React.createClass({
@@ -169,6 +173,8 @@ $(function(){
 
 		ReactDOM.render(<Slider/>,document.getElementById("sy-menu"));
 	}
-})
+});
+
+
 
 
