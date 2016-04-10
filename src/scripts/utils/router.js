@@ -6,7 +6,7 @@ var router = (function(){
 	var _initHistory = require("history/lib/createBrowserHistory");//注册H5 History
 	var Util = require("./tool.js");
 
-	var ViewPath = Path.join("/","./views");
+	var ViewPath = Path.join("/","./view");
 
 	var History = null;
 	//-------------
@@ -40,7 +40,6 @@ var router = (function(){
 
 	/**
 	* 跳转指定页面
-	* 
 	*/
 	function gotoUrl(url,queryObj,isReplace){
 		var queryString = "";
@@ -57,6 +56,7 @@ var router = (function(){
 			search:queryString,
 			action:isReplace===true?"REPLACE":"PUSH",
 			state:{
+
 				url:url,
 				search:queryString
 			}        
