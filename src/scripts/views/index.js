@@ -13,8 +13,8 @@ var Icon = Antd.Icon;
 
 //全局导出
 window.Syp = {
-	Util:Util,
-	Router:Router
+	util:Util,
+	router:Router
 }
 
 $(function(){
