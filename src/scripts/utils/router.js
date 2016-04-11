@@ -18,6 +18,8 @@ var router = (function(){
 		History = _initHistory()||{};
 		curPath = pathname||homePath;
 
+		console.warn(History);
+
 		//注册跳转前执行事件
 		History.listenBefore(function(transition){
 			console.log("listenBefore",transition);
@@ -27,15 +29,15 @@ var router = (function(){
 		//注册跳转后执行事件
 		History.listen(function(transition){
 			console.log("listen",transition);
-			if(!transition.pathname||$.trim(transition.pathname)==="/"){
-				gotoUrl(homePath);	
+			var pathname = transition.state&&transition.state.pathname;
+			if(!pathname||$.trim(pathname)==="/"){
+				gotoUrl(homePath,{a:11});	
 			}else{
-
-				curPath = transition.pathname;
 				//跳转指定页面
-				_loadPage(curPath);
+				_loadPage(pathname);
 			}
 		});
+		
 	}
 
 	/**
@@ -43,7 +45,8 @@ var router = (function(){
 	*/
 	function gotoUrl(url,queryObj,isReplace){
 		var queryString = "";
-		if(queryObj!=null && !$.isPlainObject(queryObj)){
+
+		if(queryObj!=null && $.isPlainObject(queryObj)){
 			var queryArr = [];
 			$.each(queryObj,function(key,val){
 				queryArr.push(key+"="+val);
@@ -52,12 +55,11 @@ var router = (function(){
 		}
 
 		History.push({
-			pathname:url,
-			search:queryString,
+			pathname:"/?"+url+queryString,
 			action:isReplace===true?"REPLACE":"PUSH",
 			state:{
-
-				url:url,
+				pathname:url,
+				query:queryObj,
 				search:queryString
 			}        
 		});	

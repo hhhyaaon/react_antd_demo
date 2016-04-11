@@ -92,7 +92,7 @@ gulp.task("index",function(){
 //web server
 gulp.task("connect",function(){
 	connect.server({
-		root:path.join(__dirname,"./dist/"),
+		root:path.join(__dirname,"./dist"),
 		port:port,
 		livereload:true
 	})
