@@ -9,6 +9,8 @@ var minify = require("gulp-minify-css");
 var autoPrefix = require("gulp-autoPrefixer");
 var babel = require ("gulp-babel");
 var source = require("vinyl-source-stream");
+var changed = require("gulp-changed");
+
 
 var path = require("path");
 var rename = require("gulp-rename");
@@ -56,6 +58,7 @@ gulp.task("jsx",function(){
 		//.pipe(babel({presets:["es2015"]}))
 		//.pipe(browserify())
 		//.pipe(react())
+		.pipe(changed(path.join(__dirname,dist.js)))
 		.pipe(browserify(
 			{
 				transform:["reactify"]
