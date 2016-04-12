@@ -17,6 +17,7 @@ $(function(){
 	var SearchBar = null;
 
 	init();
+	
 
 	function init(){
 		renderPage();

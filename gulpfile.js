@@ -1,5 +1,4 @@
 var gulp = require("gulp");
-var connect = require("gulp-connect");
 var browserify = require("gulp-browserify");
 var watchify = require("watchify");
 var react = require("gulp-react");
@@ -10,15 +9,13 @@ var autoPrefix = require("gulp-autoPrefixer");
 var babel = require ("gulp-babel");
 var source = require("vinyl-source-stream");
 var changed = require("gulp-changed");
+var browserSync = require("browser-sync").create();
 
 
 var path = require("path");
 var rename = require("gulp-rename");
 var assign = require("lodash.assign");
 
-
-
-var port = process.env.port||5000;
 
 
 var src = {
@@ -36,20 +33,6 @@ var dist = {
 	html:"./dist/view",
 	lib:"./dist/lib"
 }
-
-// var opts = assign({},watchify.args,{ 
-// 		debug:true,
-// 		transform:["reactify"]
-// 	});
-
-// var b = watchify(browserify(opts));  //创建browserify实例 
-// b.on("update",bundle);//当依赖发生变化时，运行打包工具
-
-// function bundle(){
-// 	return b.bundle();
-// 		.pipe()
-// }
-
 
 
 //jsx
@@ -91,34 +74,15 @@ gulp.task("index",function(){
 		.pipe(gulp.dest(path.join(__dirname,dist.index)))
 });
 
-
-//web server
+//server
 gulp.task("connect",function(){
-	connect.server({
-		root:path.join(__dirname,"./dist"),
-		port:port,
-		livereload:true
-	})
+	browserSync.init({
+		server:{
+			baseDir:path.join(__dirname,"/dist/")
+		}
+	});
 });
 
-
-//js
-gulp.task("js",function(){
-	return gulp.src(path.join(__dirname,dist.js,"/**/*.js"))
-		.pipe(connect.reload())
-});
-
-//css
-gulp.task("css",function(){
-	return gulp.src(path.join(__dirname,dist.css,"/**/*.css"))
-		.pipe(connect.reload())
-});
-
-//html
-gulp.task("html",function(){
-	return gulp.src(path.join(__dirname,"./dist/**/*.html"))
-		.pipe(connect.reload());
-});
 
 
 
@@ -138,14 +102,9 @@ gulp.task("antd",function(){
 gulp.task("watch",function(){
 	var watchArr = [];
 
-	watchArr.push(gulp.watch(path.join(__dirname,src.js,"/**/*.js"),["jsx"]));
-	watchArr.push(gulp.watch(path.join(__dirname,src.css,"/**/*.less"),["less"]));
-	watchArr.push(gulp.watch(path.join(__dirname,src.html,"/**/*.html"),["tpl"]));
-	watchArr.push(gulp.watch(path.join(__dirname,src.index),["index"]));
-
-	watchArr.push(gulp.watch(path.join(__dirname,dist.js,"/**/*.js"),["js"]));
-	watchArr.push(gulp.watch(path.join(__dirname,dist.css,"/**/*.css"),["css"]));
-	watchArr.push(gulp.watch(path.join(__dirname,"./dist/**/*.html"),["html","index"]));
+	watchArr.push(gulp.watch(path.join(__dirname,dist.js,"/**/*.js"),browserSync.reload));
+	watchArr.push(gulp.watch(path.join(__dirname,dist.css,"/**/*.css"),browserSync.reload));
+	watchArr.push(gulp.watch(path.join(__dirname,"./dist/**/*.html"),browserSync.reload));
 
 	watchArr.forEach(function(watch,i){
 		watch.on("change",function(e){

@@ -97,6 +97,10 @@ var router = (function(){
         return obj;
 	}
 
+	function getLocation(){
+		var url = window.loacation;
+	}
+
 	/**
 	 * 加载子页面
 	 * @param  {string} url 目标子页面路径
@@ -133,6 +137,7 @@ var router = (function(){
 		gotoUrl:gotoUrl,
 		getQuery:getQuery
 	}
+
 
 
 }());
