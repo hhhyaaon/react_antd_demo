@@ -1,0 +1,7 @@
+./src/scripts/utils/router.js,
+./src/scripts/utils/tool.js,
+./src/scripts/views/index.js,
+./src/scripts/views/common/home.js,
+./src/scripts/views/product/edit.js,
+./src/scripts/views/product/detail.js,
+./src/scripts/views/product/list.js,
