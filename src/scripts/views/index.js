@@ -1,20 +1,17 @@
-
-$ = require("jquery");
 var React = require("react");
 var ReactDOM = require("react-dom");
 
 var Util = require("../utils/tool.js");
 var Router = require("../utils/router.js");
 
-var Antd = require("antd");
-var Menu = Antd.Menu;
-var Icon = Antd.Icon;
+var Menu = require("antd/lib/menu");
+var Icon = require("antd/lib/icon");
 
 
 //全局导出
 window.Syp = {
-	Util:Util,
-	Router:Router
+	util:Util,
+	router:Router
 }
 
 $(function(){

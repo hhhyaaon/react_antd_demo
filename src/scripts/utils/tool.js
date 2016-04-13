@@ -1,25 +1,34 @@
 var React = require("react");
 var ReactDOM = require("react-dom");
-var Antd = require("antd");
 
-var Spin = Antd.Spin;
-var Modal = Antd.Modal;
+var Spin = require("antd/lib/spin");
+var Modal = require("antd/lib/modal");
+
+
 
 
 var Util = {
-	config:{
-		/**
-		 * 当前loading数
-		 * @type {Number}
-		 */
-		loadingCount:0
-	},
+	
+	/**
+	 * 列表页每页显示条数
+	 * @type {Number}
+	 */
+	listPageSize:8,
+	/**
+	* 当前loading数
+	* @type {Number}
+	*/
+	loadingCount:0,
+	
+	
+
+
 	/**
 	 * 显示loading框
 	 * @return {[type]} 
 	 */
 	showLoading:function(){
-		if(Util.config.loadingCount<=0){
+		if(Util.loadingCount<=0){
 			ReactDOM.render(
 				<div className="sy-loadingwrap">
 					<Spin size="large"></Spin>
@@ -27,19 +36,18 @@ var Util = {
 				document.getElementById("sy-loading")
 			);
 		}
-		Util.config.loadingCount++;
+		Util.loadingCount++;
 	},
 	/**
 	 * 隐藏loading框
 	 * @return {[type]} 
 	 */
 	hideLoading:function(){
-		var loadingCount = Util.config.loadingCount;
-		if(Util.config.loadingCount===1){
+		if(Util.loadingCount===1){
 			ReactDOM.unmountComponentAtNode(document.getElementById("sy-loading"));
 		}
-		if(Util.config.loadingCount>0){
-			Util.config.loadingCount--;
+		if(Util.loadingCount>0){
+			Util.loadingCount--;
 		}
 	},
 
@@ -77,4 +85,27 @@ var Util = {
 		return returnModal;
 	}())
 };
+
+$.extend(true,Util,{
+	/**
+	 * antd 组件config
+	 * @type {Object}
+	 */
+	config:{
+		/**
+		 * 分页插件config
+		 * @type {Object}
+		 */
+		pagination:{
+			size:"small",
+			total:0,
+			pageSize:Util.listPageSize,
+			showSizeChanger:true,
+			showQuickJumper:true,
+			onChange:$.noop
+		} 
+	}
+})
+
+
 module.exports = Util;
