@@ -1,7 +1,7 @@
 var React = require("react");
 var ReactDOM = require("react-dom");
 var Antd = require("antd");
-var Button = Antd.Button;
+var Button = require("antd/lib/button");
 
 $(function(){
 	init();

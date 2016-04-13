@@ -1,10 +1,8 @@
 var React = require("react");
 var ReactDOM = require("react-dom");
-var Antd = require("antd");
 
-var Spin = Antd.Spin;
-var Modal = Antd.Modal;
-
+var Spin = require("antd/lib/spin");
+var Modal = require("antd/lib/modal");
 
 var Util = {
 	
@@ -18,8 +16,6 @@ var Util = {
 	* @type {Number}
 	*/
 	loadingCount:0,
-	
-	
 
 
 	/**

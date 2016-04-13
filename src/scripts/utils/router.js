@@ -1,7 +1,7 @@
 var router = (function(){
 	var Path = require("path");
 	var ReactDOM = require("react-dom");
-	var _History = require("history");//注册H5 History
+	var _History = require("history/lib/createBrowserHistory");//注册H5 History
 	var Util = require("./tool.js");
 
 	var ViewPath = Path.join("/","./view");

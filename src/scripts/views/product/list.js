@@ -1,10 +1,9 @@
 var React = require("react");
 var ReactDOM = require("react-dom");
-var Antd = require("antd");
-var Table = Antd.Table;
-var Row = Antd.Row;
-var Col = Antd.Col;
-var Button = Antd.Button;
+var Table = require("antd/lib/table");
+var Row = require("antd/lib/row");
+var Col = require("antd/lib/col");
+var Button = require("antd/lib/button");
 var ButtonGrup = Button.Group;
 
 $(function(){
