@@ -1,5 +1,5 @@
 var gulp = require("gulp");
-var browserify = require("gulp-browserify");
+var browserify = require("browserify");
 var watchify = require("watchify");
 var react = require("gulp-react");
 var uglify = require("gulp-uglify");
@@ -15,41 +15,63 @@ var browserSync = require("browser-sync").create();
 var path = require("path");
 var rename = require("gulp-rename");
 var assign = require("lodash.assign");
+var glob = require("glob");
+var eventStream = require("event-stream");
+var factor = require("factor-bundle");
+var fs = require("fs");
+var mkdir = require("mkdirp");
+
 
 
 
 var src = {
-	index:"./src/index.html",
-	js:"./src/scripts",
-	css:"./src/styles",
-	html:"./src/views",
-	lib:"./src/libs"
+	index:"src/index.html",
+	js:"src/scripts",
+	css:"src/styles",
+	html:"src/views",
+	lib:"src/libs"
 }
 
 var dist = {
-	index:"./dist",
-	js:"./dist/js",
-	css:"./dist/css",
-	html:"./dist/view",
-	lib:"./dist/lib"
+	index:"dist",
+	js:"dist/js",
+	css:"dist/css",
+	html:"dist/view",
+	lib:"dist/lib"
 }
 
 
-//jsx
+
+
+
 gulp.task("jsx",function(){
-	return gulp.src(path.join(__dirname,src.js,"/**/*.js"))
-		//.pipe(babel({presets:["es2015"]}))
-		//.pipe(browserify())
-		//.pipe(react())
-		.pipe(changed(path.join(__dirname,dist.js)))
-		.pipe(browserify(
-			{
-				transform:["reactify"]
-			}
-		))
-		.pipe(uglify())
-		.pipe(gulp.dest(path.join(__dirname,dist.js)))
+	var files = glob.sync(path.join(src.js,"./**/*.js"));
+	var dirs = glob.sync(path.join(src.js,"./**/*/"));
+
+
+	var output = files.map(function(file){
+		var rs = file.replace(src.js.replace(/\\/g,"/"),"")
+		return path.join(dist.js,"."+rs);
+	});
+	//创建dist文件夹
+	dirs.map(function(dir){
+		var outputDir = mkdir.sync(dir.replace(src.js,dist.js));
+	});
+
+
+	var browerArg = {
+		//debug:true,
+		entries:files,
+		transform:["reactify"]
+	}
+	return watchify(browserify(assign(browerArg,watchify.args)))
+		//.plugin(factor,{o:output})
+		.bundle()
+		.pipe(source("common.js"))
+		.pipe(gulp.dest(path.join(__dirname,dist.js)));
 });
+
+
 
 
 //less
@@ -98,10 +120,19 @@ gulp.task("antd",function(){
 		.pipe(gulp.dest(path.join(__dirname,dist.lib,"./antd/")))
 });
 
+//less
+gulp.task("jquery",function(){
+	return gulp.src(path.join(__dirname,src.lib,"/**/*.js"))
+		.pipe(gulp.dest(path.join(__dirname,dist.lib)))
+});
 
 gulp.task("watch",function(){
 	var watchArr = [];
-
+	watchArr.push(gulp.watch(path.join(__dirname,src.js,"/**/*.js"),["jsx"]));
+	watchArr.push(gulp.watch(path.join(__dirname,src.css,"/**/*.less"),["less"]));
+	watchArr.push(gulp.watch(path.join(__dirname,src.html,"/**/*.html"),["tpl"]));
+	watchArr.push(gulp.watch(path.join(__dirname,src.index),["index"]));
+	
 	watchArr.push(gulp.watch(path.join(__dirname,dist.js,"/**/*.js"),browserSync.reload));
 	watchArr.push(gulp.watch(path.join(__dirname,dist.css,"/**/*.css"),browserSync.reload));
 	watchArr.push(gulp.watch(path.join(__dirname,"./dist/**/*.html"),browserSync.reload));
@@ -115,9 +146,10 @@ gulp.task("watch",function(){
 });
 
 
+
 //可执行任务
 
-gulp.task("lib",["antd"]);
+gulp.task("lib",["antd","jquery"]);
 
 gulp.task("default",["jsx","less","tpl","lib"],function(){
 	console.log("default finish");

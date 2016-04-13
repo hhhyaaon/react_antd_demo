@@ -20,6 +20,10 @@
     "babelify": "^7.2.0",
     "browser-sync": "^2.12.1",
     "browserify": "^13.0.0",
+    "color": "^0.11.1",
+    "event-stream": "^3.3.2",
+    "factor-bundle": "^2.5.0",
+    "glob": "^7.0.3",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^3.1.0",
     "gulp-babel": "^6.1.2",
@@ -34,8 +38,11 @@
     "gulp-uglify": "^1.5.3",
     "lodash.assign": "^4.0.7",
     "map-stream": "0.0.6",
+    "mkdirp": "^0.5.1",
     "pause-stream": "0.0.11",
+    "reactify": "^1.1.1",
     "split": "^1.0.0",
+    "through": "^2.3.8",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.7.0"
   }
