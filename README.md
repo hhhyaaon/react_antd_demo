@@ -16,7 +16,7 @@ React Ant_Design SPA Gulp
 ```
 npm install
 ```
-##本地发布localhost:5000
+##本地发布localhost:3000
 ```
-gulp server
+gulp build
 ```
