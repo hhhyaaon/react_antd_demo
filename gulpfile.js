@@ -17,8 +17,8 @@ var rename = require("gulp-rename");
 var assign = require("lodash.assign");
 var glob = require("glob");
 var factor = require("factor-bundle");
-var fs = require("fs");
 var mkdir = require("mkdirp");
+
 
 
 var src = {
@@ -36,8 +36,6 @@ var dist = {
 	html:"dist/view",
 	lib:"dist/lib"
 }
-
-
 
 
 
@@ -60,24 +58,13 @@ gulp.task("jsx",function(){
 		entries:input_files,
 		transform:["reactify"]
 	}
-	var b = watchify(browserify(assign(browerArg,watchify.args)));
-
-	//监听变化
-	b.on("update",function(file){
-		console.log("[change]"+file);
-		rebundle();
-	})
-	return rebundle();
-
-	function rebundle(){
-		return b
+	return watchify(browserify(assign(browerArg,watchify.args)))
 		.plugin(factor,{o:output_files})
 		.bundle()
 		.pipe(source("common.js"))
-		.pipe(buffer())
-		.pipe(uglify())
+		// .pipe(buffer())
+		// .pipe(uglify())
 		.pipe(gulp.dest(path.join(__dirname,dist.js)));
-	}
 });
 
 
@@ -117,8 +104,6 @@ gulp.task("connect",function(){
 });
 
 
-
-
 //antd
 gulp.task("antd",function(){
 	return gulp.src("./node_modules/antd/style/index.less")
@@ -139,6 +124,7 @@ gulp.task("jquery",function(){
 
 gulp.task("watch",function(){
 	var watchArr = [];
+	watchArr.push(gulp.watch(path.join(__dirname,src.js,"/**/*.js"),["jsx"]));
 	watchArr.push(gulp.watch(path.join(__dirname,src.css,"/**/*.less"),["less"]));
 	watchArr.push(gulp.watch(path.join(__dirname,src.html,"/**/*.html"),["tpl"]));
 	watchArr.push(gulp.watch(path.join(__dirname,src.index),["index"]));

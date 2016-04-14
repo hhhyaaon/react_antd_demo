@@ -6,6 +6,7 @@ var Col = require("antd/lib/col");
 var Button = require("antd/lib/button");
 var ButtonGrup = Button.Group;
 
+
 $(function(){
 
 	var url = {
@@ -21,8 +22,15 @@ $(function(){
 	function init(){
 		renderPage();
 		getPdts();	
+        //测试页面卸载
+        console.log("router",Syp.router);
+        Syp.router.beforePageUnload(function(dst,cur){
+            console.warn("目标页面：",dst,"当前页面：",cur);
+           // return false;
+        });
 	}
 
+    
 	function renderPage(){
 		SearchBar = ReactDOM.render(
 			<div>
@@ -31,7 +39,8 @@ $(function(){
 						<Button 
 							type="primary" 
 							size="large"
-							onClick={function(){Syp.router.gotoUrl(url.ProductEdit)}}>新增</Button>
+							onClick={function(){Syp.router.gotoUrl(url.ProductEdit)}}>新增
+                        </Button>
 						<ButtonGrup size="large">
 							<Button type="ghost">启用</Button>
   							<Button type="ghost">禁用</Button>

@@ -38,13 +38,20 @@ var Util = {
 	 * @return {[type]} 
 	 */
 	hideLoading:function(){
-		if(Util.loadingCount===1){
+        Util.loadingCount--;
+		if(Util.loadingCount===0){
 			ReactDOM.unmountComponentAtNode(document.getElementById("sy-loading"));
 		}
-		if(Util.loadingCount>0){
-			Util.loadingCount--;
-		}
+		
 	},
+    /**
+	 * 删除所有loading框
+	 * @return {[type]} 
+	 */
+    closeLoading:function(){
+        Util.loadingCount=0;
+        Util.hideLoading();
+    },
 
 	/**
 	 * 显示提示框
@@ -78,7 +85,18 @@ var Util = {
 			} 
 		});
 		return returnModal;
-	}())
+	}()),
+    
+    /**
+	 * 删除所有dialog
+	 * @return {[type]} 
+	 */
+    closeDialog:function(){
+        $.each($(".ant-modal-container"),function(i,ele){
+            ReactDOM.unmountComponentAtNode(ele);
+        });
+        
+    }
 };
 
 $.extend(true,Util,{
