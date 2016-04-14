@@ -106,13 +106,10 @@ gulp.task("connect",function(){
 
 //antd
 gulp.task("antd",function(){
-	return gulp.src("./node_modules/antd/style/index.less")
+	return gulp.src(path.join(__dirname,src.lib,"./antd/antd.less"))
 		.pipe(less())
 		.pipe(autoPrefix())
 		.pipe(minify())
-		.pipe(rename(function(p){
-			p.basename = "antd";
-		}))
 		.pipe(gulp.dest(path.join(__dirname,dist.lib,"./antd/")))
 });
 
