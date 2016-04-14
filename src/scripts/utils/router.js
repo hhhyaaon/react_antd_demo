@@ -23,21 +23,13 @@ var router = (function() {
 	/**
 	 * 注册路由
 	 * 
-	 * @param pathname 初始显示页面pathname
 	 */
-    function initHistory(pathname) {
+    function initHistory() {
         History = _History() || {};
-        if (!pathname || $.trim(pathname) === "/") {
-            dstPath = homePath;
-        } else {
-            dstPath = pathname;
-        }
-
-
 
         //注册跳转前执行事件
         History.listenBefore(function(transition) {
-            var pathname = transition.state && transition.state.pathname;
+            var pathname = getLocation().pathname;
             if (!pathname || $.trim(pathname) === "/") {
                 dstPath = homePath;
             } else {
@@ -48,6 +40,12 @@ var router = (function() {
 
         //注册跳转后执行事件
         History.listen(function(transition) {
+            var pathname = getLocation().pathname;
+            if ( pathname==null || $.trim(pathname) === "/") {
+                dstPath = homePath;
+            } else {
+                dstPath = pathname;
+            }
             //跳转指定页面
             _loadPage(dstPath);
         });
@@ -74,7 +72,7 @@ var router = (function() {
         }
 
         History.push({
-            pathname: "/?" + pathname + queryString,
+            pathname: "/?" + (pathname||"/") + queryString,
             action: isReplace === true ? "REPLACE" : "PUSH",
             state: {
                 pathname: pathname,
