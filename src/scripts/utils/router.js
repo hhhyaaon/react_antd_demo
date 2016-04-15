@@ -1,9 +1,21 @@
+import Path from "path";
+import Util from "./tool.js";
+import _History from "history/lib/createBrowserHistory";
+
+export default class Router{
+    constructor(){
+        
+    }
+    
+    
+    
+}
+
 /**
  * 全局路由函数
  */
-var router = (function() {
+var router = (function () {
     var Path = require("path");
-    var ReactDOM = require("react-dom");
     var Util = require("./tool.js");
     var _History = require("history/lib/createBrowserHistory");//注册H5 History
 
@@ -28,16 +40,16 @@ var router = (function() {
         History = _History() || {};
 
         //注册跳转前执行事件
-        History.listenBefore(function(transition) {
+        History.listenBefore(function (transition) {
             var pathname = getLocation().pathname;
-            dstPath = !pathname || $.trim(pathname) === "/"?homePath:pathname;
+            dstPath = !pathname || $.trim(pathname) === "/" ? homePath : pathname;
             return _beforePageUnload();
         });
 
         //注册跳转后执行事件
-        History.listen(function(transition) {
+        History.listen(function (transition) {
             var pathname = getLocation().pathname;
-            dstPath = !pathname || $.trim(pathname) === "/"?homePath:pathname;
+            dstPath = !pathname || $.trim(pathname) === "/" ? homePath : pathname;
             //跳转指定页面
             _loadPage(dstPath);
         });
@@ -57,14 +69,14 @@ var router = (function() {
 
         if (queryObj != null && $.isPlainObject(queryObj)) {
             var queryArr = [];
-            $.each(queryObj, function(key, val) {
+            $.each(queryObj, function (key, val) {
                 queryArr.push(key + "=" + encodeURIComponent(val));
             });
             queryString = "?" + queryArr.join("&");
         }
-            
-        History[isReplace===true?"replace":"push"]({
-            pathname: "/?" + (pathname||"/") + queryString,
+
+        History[isReplace === true ? "replace" : "push"]({
+            pathname: "/?" + (pathname || "/") + queryString,
             state: {
                 pathname: pathname,
                 query: queryObj,
@@ -80,13 +92,27 @@ var router = (function() {
 	 * @param href 截取查询参数的完整url路径
 	 * @returns (description)
 	 */
-    function getQuery(href) {
-        href = href == null ? window.location.href : href;
-        var search = href.substring(href.lastIndexOf("?") + 1);
-        var obj = {};
-        var reg = /([^?&=]+)=([^?&=#]*)/g;
+    function getQuery() {
+        return getLocation().query;
+    }
 
-        search.replace(reg, function(rs, $1, $2) {
+
+	/**
+	 * 获取Location信息
+	 * 
+	 * @returns Location对象（pathname,query,search）
+	 */
+    function getLocation() {
+        var href = window.location.href;
+        //pathname
+        var pathnameMatch = window.location.search.match(/(?:\?)([/\w]*)(?:\?|$)/);
+        var pathname = pathnameMatch && pathnameMatch.length > 1 ? pathnameMatch[1] : "";
+        //search
+        var search = href.substring(href.lastIndexOf("?")); //根路径时有问题
+
+        //query
+        var query = {};
+        search.replace(/([^?&=]+)=([^?&=#]*)/g, function (rs, $1, $2) {
             var name = decodeURIComponent($1);
             var val = decodeURIComponent($2);
 
@@ -101,40 +127,26 @@ var router = (function() {
                 val = String(val);
             }
 
-            obj[name] = val;
+            query[name] = val;
 
             return rs;
-        })
+        });
 
-        return obj;
-    }
-
-
-	/**
-	 * 获取Location信息
-	 * 
-	 * @returns Location对象（pathname,query,search）
-	 */
-    function getLocation() {
-        var href = window.location.href;
-        var _search = window.location.search;
-        var pathnameMatch = _search.match(/(?:\?)([/\w]*)(?:\?|$)/);
-        var pathname = pathnameMatch && pathnameMatch.length > 1 ? pathnameMatch[1] : "";
         return {
             pathname: pathname,
-            query: getQuery(href),
-            search: _search
+            query: query,
+            search: search
         }
     }
-    
-    
-    
+
+
+
     /**
      * 刷新子页面
      * 
      * @returns (description)
      */
-    function reload(){
+    function reload() {
         return _loadPage(curPath);
     }
 
@@ -152,25 +164,26 @@ var router = (function() {
             type: "get",
             url: Path.join(ViewPath, pathname) + ".html",
             dateType: "html",
-            beforeSend: function() {
+            beforeSend: function () {
                 Util.showLoading();
             },
-            success: function(resp) {
+            success: function (resp) {
                 Util.hideLoading();
                 // todo 解析resp
 
                 if (_beforePageLoad(resp) != false) {
                     $("#sy-ctn").html(resp);
+                    beforePageUnload = $.noop;
                     curPath = dstPath;
                     //dstPath = "";
                 }
             },
-            error: function() {
+            error: function () {
                 console.error("获取页面失败");
             }
         });
     }
-    
+
     /**
      * 根据pathname卸载页面
      * 
@@ -210,14 +223,14 @@ var router = (function() {
     }
 
 
-    
+
 
     return {
         initHistory: initHistory,
         gotoUrl: gotoUrl,
         getQuery: getQuery,
         getLocation: getLocation,
-        beforePageUnload: function(cb) {
+        beforePageUnload: function (cb) {
             beforePageUnload = cb;
         }
     }

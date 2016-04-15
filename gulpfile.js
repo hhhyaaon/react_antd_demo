@@ -56,12 +56,15 @@ gulp.task("jsx",function(){
 
 	var browerArg = {
 		entries:input_files,
-		transform:["reactify"]
+		transform:[["babelify", { "presets": ["es2015","react"] }]]
 	}
 	return watchify(browserify(assign(browerArg,watchify.args)))
 		.plugin(factor,{o:output_files})
 		.bundle()
+		//.on("error",function(err){console.log("[Error]:",err.description+"\n filename:"+err.filename+" line:"+err.lineNumber);})
+		.on("error",function(err){console.log("[Error]:",err)})
 		.pipe(source("common.js"))
+		
 		// .pipe(buffer())
 		// .pipe(uglify())
 		.pipe(gulp.dest(path.join(__dirname,dist.js)));
@@ -121,14 +124,10 @@ gulp.task("jquery",function(){
 
 gulp.task("watch",function(){
 	var watchArr = [];
-	watchArr.push(gulp.watch(path.join(__dirname,src.js,"/**/*.js"),["jsx"]));
-	watchArr.push(gulp.watch(path.join(__dirname,src.css,"/**/*.less"),["less"]));
-	watchArr.push(gulp.watch(path.join(__dirname,src.html,"/**/*.html"),["tpl"]));
-	watchArr.push(gulp.watch(path.join(__dirname,src.index),["index"]));
-	
-	watchArr.push(gulp.watch(path.join(__dirname,dist.js,"/**/*.js"),browserSync.reload));
-	watchArr.push(gulp.watch(path.join(__dirname,dist.css,"/**/*.css"),browserSync.reload));
-	watchArr.push(gulp.watch(path.join(__dirname,"./dist/**/*.html"),browserSync.reload));
+	watchArr.push(gulp.watch(path.join(__dirname,src.js,"/**/*.js"),["jsx"],browserSync.reload));
+	watchArr.push(gulp.watch(path.join(__dirname,src.css,"/**/*.less"),["less"],browserSync.reload));
+	watchArr.push(gulp.watch(path.join(__dirname,src.html,"/**/*.html"),["tpl"],browserSync.reload));
+	watchArr.push(gulp.watch(path.join(__dirname,src.index),["index"],browserSync.reload));
 
 	watchArr.forEach(function(watch,i){
 		watch.on("change",function(e){
