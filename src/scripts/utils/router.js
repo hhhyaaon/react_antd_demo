@@ -30,22 +30,14 @@ var router = (function() {
         //注册跳转前执行事件
         History.listenBefore(function(transition) {
             var pathname = getLocation().pathname;
-            if (!pathname || $.trim(pathname) === "/") {
-                dstPath = homePath;
-            } else {
-                dstPath = pathname;
-            }
+            dstPath = !pathname || $.trim(pathname) === "/"?homePath:pathname;
             return _beforePageUnload();
         });
 
         //注册跳转后执行事件
         History.listen(function(transition) {
             var pathname = getLocation().pathname;
-            if ( pathname==null || $.trim(pathname) === "/") {
-                dstPath = homePath;
-            } else {
-                dstPath = pathname;
-            }
+            dstPath = !pathname || $.trim(pathname) === "/"?homePath:pathname;
             //跳转指定页面
             _loadPage(dstPath);
         });
@@ -70,10 +62,9 @@ var router = (function() {
             });
             queryString = "?" + queryArr.join("&");
         }
-
-        History.push({
+            
+        History[isReplace===true?"replace":"push"]({
             pathname: "/?" + (pathname||"/") + queryString,
-            action: isReplace === true ? "REPLACE" : "PUSH",
             state: {
                 pathname: pathname,
                 query: queryObj,
@@ -135,6 +126,17 @@ var router = (function() {
             search: _search
         }
     }
+    
+    
+    
+    /**
+     * 刷新子页面
+     * 
+     * @returns (description)
+     */
+    function reload(){
+        return _loadPage(curPath);
+    }
 
 
 	/**
@@ -168,6 +170,19 @@ var router = (function() {
             }
         });
     }
+    
+    /**
+     * 根据pathname卸载页面
+     * 
+     * @param pathname 要卸载的页面pathname
+     * @returns (description)
+     */
+    function _unloadPage(pathname) {
+        //卸载当前页面组件
+        //当页面中包含未加载完毕的项，不可卸载
+        if (Util.loadingCount > 0) return false;
+        Util.closeDialog();
+    }
 
 
     /**
@@ -195,12 +210,7 @@ var router = (function() {
     }
 
 
-    function _unloadPage(pathname) {
-        //卸载当前页面组件
-        //当页面中包含未加载完毕的项，不可卸载
-        if (Util.loadingCount > 0) return false;
-        Util.closeDialog();
-    }
+    
 
     return {
         initHistory: initHistory,
