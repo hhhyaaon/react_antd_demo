@@ -1,10 +1,9 @@
-var React = require("react");
-var ReactDOM = require("react-dom");
+import React from "react";
+import ReactDOM from "react-dom";
+import Spin from "antd/lib/spin";
+import Modal from "antd/lib/modal";
 
-var Spin = require("antd/lib/spin");
-var Modal = require("antd/lib/modal");
-
-var Util = {
+const Util = {
 
 	/**
 	 * 列表页每页显示条数
@@ -118,7 +117,6 @@ $.extend(true, Util, {
             onChange: $.noop
         }
     }
-})
+});
 
-
-module.exports = Util;
+export default Util;

@@ -1,70 +1,51 @@
-import Path from "path";
-import Util from "./tool.js";
-import _History from "history/lib/createBrowserHistory";
+import _Path from "path";
+import _Util from "./tool.js";
+import _CreateHistory from "history/lib/createBrowserHistory";
 
-export default class Router{
-    constructor(){
-        
+export default class Router {
+    constructor() {
+        this._viewPath = _Path.join("/", "./view");
+        this._homePath = "/common/home";
+
+        this._History = null;
+        this.curPath = "";
+        this.dstPath = "";
+        //页面卸载前响应事件
+        this._beforePageUnloadCb = $.noop;
     }
-    
-    
-    
-}
-
-/**
- * 全局路由函数
- */
-var router = (function () {
-    var Path = require("path");
-    var Util = require("./tool.js");
-    var _History = require("history/lib/createBrowserHistory");//注册H5 History
-
-    var ViewPath = Path.join("/", "./view");
-
-    var History = null;
-
-    var homePath = "/common/home";
-    var curPath = "";
-    var dstPath = "";
-
-    //页面卸载前响应事件
-    var beforePageUnload = $.noop;
-
 
 
 	/**
 	 * 注册路由
 	 * 
 	 */
-    function initHistory() {
-        History = _History() || {};
-
+    initHistory() {
+        let _this = this;
+        this._History = _CreateHistory() || {};
         //注册跳转前执行事件
-        History.listenBefore(function (transition) {
-            var pathname = getLocation().pathname;
-            dstPath = !pathname || $.trim(pathname) === "/" ? homePath : pathname;
-            return _beforePageUnload();
+        this._History.listenBefore(function (transition) {
+            let pathname = _this.getLocation().pathname;
+            _this.dstPath = (transition.state&&transition.state.pathname)||_this._homePath;
+            return _this._beforePageUnload();
         });
 
         //注册跳转后执行事件
-        History.listen(function (transition) {
-            var pathname = getLocation().pathname;
-            dstPath = !pathname || $.trim(pathname) === "/" ? homePath : pathname;
+        this._History.listen(function (transition) {
+            let pathname = _this.getLocation().pathname;
+            _this.dstPath = !pathname || $.trim(pathname) === "/" ? _this._homePath : pathname;
             //跳转指定页面
-            _loadPage(dstPath);
+            _this._loadPage(_this.dstPath);
         });
-
     }
 
-
-	/**
+    /**
 	 * 跳转指定页面
 	 * 
 	 * @param pathname 指定页面pathname
 	 * @param queryObj 查询参数对象
 	 * @param isReplace 是否使用replaceState，默认状态下是pushState，若设置为true，则前一页的历史记录不会被保存
 	 */
-    function gotoUrl(pathname, queryObj, isReplace) {
+    gotoUrl(pathname, queryObj, isReplace) {
         var queryString = "";
 
         if (queryObj != null && $.isPlainObject(queryObj)) {
@@ -75,7 +56,7 @@ var router = (function () {
             queryString = "?" + queryArr.join("&");
         }
 
-        History[isReplace === true ? "replace" : "push"]({
+        this._History[isReplace === true ? "replace" : "push"]({
             pathname: "/?" + (pathname || "/") + queryString,
             state: {
                 pathname: pathname,
@@ -85,36 +66,34 @@ var router = (function () {
         });
     }
 
-
-	/**
+    /**
 	 * 获取查询参数对象
 	 * 
 	 * @param href 截取查询参数的完整url路径
 	 * @returns (description)
 	 */
-    function getQuery() {
-        return getLocation().query;
+    getQuery() {
+        return this.getLocation().query;
     }
 
-
-	/**
+    /**
 	 * 获取Location信息
 	 * 
 	 * @returns Location对象（pathname,query,search）
 	 */
-    function getLocation() {
-        var href = window.location.href;
+    getLocation() {
+        let href = window.location.href;
         //pathname
-        var pathnameMatch = window.location.search.match(/(?:\?)([/\w]*)(?:\?|$)/);
-        var pathname = pathnameMatch && pathnameMatch.length > 1 ? pathnameMatch[1] : "";
+        let pathnameMatch = window.location.search.match(/(?:\?)([/\w]*)(?:\?|$)/);
+        let pathname = pathnameMatch && pathnameMatch.length > 1 ? pathnameMatch[1] : "";
         //search
-        var search = href.substring(href.lastIndexOf("?")); //根路径时有问题
+        let search = href.substring(href.lastIndexOf("?")); //根路径时有问题
 
         //query
-        var query = {};
+        let query = {};
         search.replace(/([^?&=]+)=([^?&=#]*)/g, function (rs, $1, $2) {
-            var name = decodeURIComponent($1);
-            var val = decodeURIComponent($2);
+            let name = decodeURIComponent($1);
+            let val = decodeURIComponent($2);
 
             //类型装换
             if ($.trim(val).toLowerCase() === true.toString()) {
@@ -140,14 +119,20 @@ var router = (function () {
     }
 
 
-
     /**
      * 刷新子页面
      * 
      * @returns (description)
      */
-    function reload() {
-        return _loadPage(curPath);
+    reload() {
+        return this._loadPage(this.curPath);
+    }
+
+    beforePageUnload(cb) {
+        if (typeof cb === "function") {
+            this._beforePageUnloadCb = cb;
+        }
+
     }
 
 
@@ -157,24 +142,23 @@ var router = (function () {
 	 * @param pathname 即将跳转的pathname
 	 * @returns 跳转后延迟对象
 	 */
-    function _loadPage(pathname) {
+    _loadPage(pathname) {
         if (pathname == null || pathname.length === 0) return;
-
+        let _this = this;
         return $.ajax({
             type: "get",
-            url: Path.join(ViewPath, pathname) + ".html",
+            url: _Path.join(_this._viewPath, pathname) + ".html",
             dateType: "html",
             beforeSend: function () {
-                Util.showLoading();
+                _Util.showLoading();
             },
             success: function (resp) {
-                Util.hideLoading();
+                _Util.hideLoading();
                 // todo 解析resp
 
-                if (_beforePageLoad(resp) != false) {
+                if (_this._beforePageLoad(resp) != false) {
                     $("#sy-ctn").html(resp);
-                    beforePageUnload = $.noop;
-                    curPath = dstPath;
+                    _this.curPath = _this.dstPath;
                     //dstPath = "";
                 }
             },
@@ -190,11 +174,11 @@ var router = (function () {
      * @param pathname 要卸载的页面pathname
      * @returns (description)
      */
-    function _unloadPage(pathname) {
+    _unloadPage(pathname) {
         //卸载当前页面组件
         //当页面中包含未加载完毕的项，不可卸载
-        if (Util.loadingCount > 0) return false;
-        Util.closeDialog();
+        if (_Util.loadingCount > 0) return false;
+        _Util.closeDialog();
     }
 
 
@@ -204,8 +188,8 @@ var router = (function () {
      * @param html 要加载的页面内容
      * @returns return false,阻止页面加载
      */
-    function _beforePageLoad(html) {
-        console.log("[_beforePageLoad] 上一页:", curPath, "当前页面:", dstPath);
+    _beforePageLoad(html) {
+        console.log("[_beforePageLoad] 上一页:", this.curPath, "当前页面:", this.dstPath);
         //todo 全局初始化页面
     }
 
@@ -215,28 +199,15 @@ var router = (function () {
      * 
      * @returns return false，阻止页面卸载
      */
-    function _beforePageUnload() {
-        console.log("[_beforePageUnload] 当前页面:", curPath, "目标页面:", dstPath);
-        if (_unloadPage() === false) return false;
+    _beforePageUnload() {
+        console.log("[_beforePageUnload] 当前页面:", this.curPath, "目标页面:", this.dstPath);
+        if (this._unloadPage() === false) return false;
         //执行用户定义页面卸载事件,若事件return false 阻止卸载
-        if (typeof beforePageUnload === "function" && beforePageUnload.call(this, dstPath, curPath) === false) return false;
-    }
-
-
-
-
-    return {
-        initHistory: initHistory,
-        gotoUrl: gotoUrl,
-        getQuery: getQuery,
-        getLocation: getLocation,
-        beforePageUnload: function (cb) {
-            beforePageUnload = cb;
+        if (typeof this._beforePageUnloadCb === "function" && this._beforePageUnloadCb.call(this, this.dstPath, this.curPath) === false) {
+            return false
+        }else{
+            this._beforePageUnloadCb = $.noop;
         }
     }
 
-
-
-} ());
-
-module.exports = router;
+}

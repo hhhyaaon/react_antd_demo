@@ -6,9 +6,6 @@ var Form = require("antd/lib/form");
 var FormItem = Form.Item;
 var Input = require("antd/lib/input");
 
-import detail from "./detail.js"
-console.log("detail",new detail());
-
 
 $(function(){
 	init();
