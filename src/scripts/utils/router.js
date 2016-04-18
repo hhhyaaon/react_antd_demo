@@ -1,3 +1,5 @@
+import React from "react";
+import ReactDOM from "react-dom";
 import _Path from "path";
 import _Util from "./tool.js";
 import _CreateHistory from "history/lib/createBrowserHistory";
@@ -144,28 +146,31 @@ export default class Router {
 	 */
     _loadPage(pathname) {
         if (pathname == null || pathname.length === 0) return;
-        let _this = this;
-        return $.ajax({
-            type: "get",
-            url: _Path.join(_this._viewPath, pathname) + ".html",
-            dateType: "html",
-            beforeSend: function () {
-                _Util.showLoading();
-            },
-            success: function (resp) {
-                _Util.hideLoading();
-                // todo 解析resp
+        //todo 判断文件是否存在
+        let $script = $("<script type='text/javascript'>").attr("src","/js/views"+pathname+".js");
+        let $style = $("<link rel='stylesheet' type='text/css'>").attr("href","/css/views"+pathname+".css")
+        $("#sy-source").append($style).append($script);
+        // return $.ajax({
+        //     type: "get",
+        //     url: _Path.join(_this._viewPath, pathname) + ".html",
+        //     dateType: "html",
+        //     beforeSend: function () {
+        //         _Util.showLoading();
+        //     },
+        //     success: function (resp) {
+        //         _Util.hideLoading();
+        //         // todo 解析resp
 
-                if (_this._beforePageLoad(resp) != false) {
-                    $("#sy-ctn").html(resp);
-                    _this.curPath = _this.dstPath;
-                    //dstPath = "";
-                }
-            },
-            error: function () {
-                console.error("获取页面失败");
-            }
-        });
+        //         if (_this._beforePageLoad(resp) != false) {
+        //             $("#sy-ctn").html(resp);
+        //             _this.curPath = _this.dstPath;
+        //             //dstPath = "";
+        //         }
+        //     },
+        //     error: function () {
+        //         console.error("获取页面失败");
+        //     }
+        // });
     }
 
     /**
@@ -207,7 +212,14 @@ export default class Router {
             return false
         }else{
             this._beforePageUnloadCb = $.noop;
+            //卸载子页
+            // if($("#sy-ctn").children().length>0){
+            //     debugger;
+            //     ReactDOM.unmountComponentAtNode($("#sy-ctn").children().get(0));
+            // }
+            $("#sy-source,#sy-ctn").empty();
         }
+        
     }
 
 }

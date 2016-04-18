@@ -4,7 +4,6 @@ import Spin from "antd/lib/spin";
 import Modal from "antd/lib/modal";
 
 const Util = {
-
 	/**
 	 * 列表页每页显示条数
 	 * @type {Number}
